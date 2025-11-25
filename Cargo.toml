@@ -1,0 +1,11 @@
+[package]
+name = "rust-coserv-cover-demo"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+coserv-rs = { git = "https://github.com/MonakaResearch/coserv-rs.git", branch = "fjcoserv" }
+corim-rs = { git = "https://github.com/veraison/corim-rs", features = ["openssl"] }
+cover = { git = "https://github.com/paulhowardarm/cover", branch = "phCoserv" }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = { version = "1.0.140", features = ["raw_value"] }
