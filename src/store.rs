@@ -6,7 +6,7 @@ use coserv_rs::coserv::{Coserv, CoservProfile, ResultSetTypeChoice};
 use cover::corim::{KeyType, TypedCryptoKey, INTERP_KEYS_EXT_ID};
 use cover::ect::{CmType, Ect, EctBuilder, ElementMap};
 use cover::result::{Error, Result};
-use cover::{CorimStore, EvRelation, EvsRelation, RvRelation};
+use cover::{authority, CorimStore, EvRelation, EvsRelation, RvRelation};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -51,99 +51,20 @@ impl<'a> CoservParseResult<'a> {
             ResultSetTypeChoice::ReferenceValues(rv) => {
                 for rv_quad in rv.rv_quads.clone() {
                     let rvt = rv_quad.triple;
-                    let condition: Ect<'a> = EctBuilder::new()
-                        .cm_type(CmType::ReferenceValues)
-                        .environment(rvt.ref_env.to_fully_owned())
-                        .element_list(
-                            rvt.ref_claims
-                                .iter()
-                                .map(|e| ElementMap {
-                                    mkey: e.mkey.as_ref().map(|k| k.to_fully_owned()),
-                                    mval: e.mval.to_fully_owned(),
-                                })
-                                .collect(),
-                        )
-                        .build()?;
-
-                    let addition: Ect<'a> = match profile {
-                        Some(p) => EctBuilder::new().profile(p.to_fully_owned()),
-                        None => EctBuilder::new(),
-                    }
-                    .cm_type(CmType::ReferenceValues)
-                    .environment(rvt.ref_env.to_fully_owned())
-                    .authority(
-                        rv_quad
-                            .authorities
-                            .iter()
-                            .map(|v| v.to_fully_owned())
-                            .collect(),
-                    )
-                    .build()?;
-
-                    self.rv_list.push(RvRelation {
-                        condition,
-                        addition,
-                    });
-
+                    let authority = rv_quad.authorities;
+                    self.rv_list.push(RvRelation::from_reference_triple_record(
+                        &rvt, profile, &authority,
+                    )?);
                     updated = true;
                 }
             }
             ResultSetTypeChoice::TrustAnchors(ta) => {
                 for ta_quad in ta.ak_quads.clone() {
                     let akt = ta_quad.triple;
-                    let condition = match &akt.conditions {
-                        Some(cond) => match &cond.authorized_by {
-                            Some(auth_by) => EctBuilder::new()
-                                .authority(auth_by.iter().map(|c| c.to_fully_owned()).collect()),
-                            None => EctBuilder::new(),
-                        },
-                        None => EctBuilder::new(),
-                    }
-                    .cm_type(CmType::Endorsements)
-                    .environment(akt.environment.to_fully_owned())
-                    .element_list(
-                        akt.key_list
-                            .iter()
-                            .map(|e| ElementMap {
-                                mkey: match &akt.conditions {
-                                    Some(cond) => cond.mkey.as_ref().map(|k| k.to_fully_owned()),
-                                    None => None,
-                                },
-                                mval: MeasurementValuesMapBuilder::new()
-                                    .add_extension(
-                                        INTERP_KEYS_EXT_ID,
-                                        TypedCryptoKey {
-                                            key: e.to_fully_owned(),
-                                            key_type: KeyType::AttestKey,
-                                        }
-                                        .into(),
-                                    )
-                                    .build()
-                                    .unwrap(),
-                            })
-                            .collect(),
-                    )
-                    .build()?;
-
-                    let addition = match profile {
-                        Some(p) => EctBuilder::new().profile(p.to_fully_owned()),
-                        None => EctBuilder::new(),
-                    }
-                    .cm_type(CmType::Endorsements)
-                    .authority(
-                        ta_quad
-                            .authorities
-                            .iter()
-                            .map(|v| v.to_fully_owned())
-                            .collect(),
-                    )
-                    .build()?;
-
-                    self.ev_list.push(EvRelation {
-                        condition: vec![condition],
-                        addition: vec![addition],
-                    });
-
+                    let authority = ta_quad.authorities;
+                    self.ev_list.push(EvRelation::from_attest_key_triple_record(
+                        &akt, profile, &authority,
+                    )?);
                     updated = true;
                 }
             }
