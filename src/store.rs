@@ -1,12 +1,10 @@
 use std::vec::IntoIter;
 
-use corim_rs::{Corim, MeasurementValuesMapBuilder, ProfileTypeChoice};
+use corim_rs::{Corim, ProfileTypeChoice};
 
 use coserv_rs::coserv::{Coserv, CoservProfile, ResultSetTypeChoice};
-use cover::corim::{KeyType, TypedCryptoKey, INTERP_KEYS_EXT_ID};
-use cover::ect::{CmType, Ect, EctBuilder, ElementMap};
 use cover::result::{Error, Result};
-use cover::{authority, CorimStore, EvRelation, EvsRelation, RvRelation};
+use cover::{CorimStore, EvRelation, EvsRelation, RvRelation};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize)]
