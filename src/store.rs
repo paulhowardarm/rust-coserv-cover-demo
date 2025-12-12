@@ -1,12 +1,10 @@
 use std::vec::IntoIter;
 
-use corim_rs::{Corim, MeasurementValuesMapBuilder, ProfileTypeChoice};
+use corim_rs::{Corim, ProfileTypeChoice};
 
 use coserv_rs::coserv::{Coserv, CoservProfile, ResultSetTypeChoice};
-use cover::corim::{KeyType, TypedCryptoKey, INTERP_KEYS_EXT_ID};
-use cover::ect::{CmType, Ect, EctBuilder, ElementMap};
 use cover::result::{Error, Result};
-use cover::{authority, CorimStore, EvRelation, EvsRelation, RvRelation};
+use cover::{CorimStore, EvRelation, EvsRelation, RvRelation};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -132,7 +130,9 @@ impl<'a> MemCoservStore<'a> {
     pub fn add_coserv_cbor_bytes(&mut self, bytes: &[u8]) -> Result<()> {
         let coserv = Coserv::from_cbor(bytes)
             .map_err(|_e| Error::custom("Failed to parse CoSERV from CBOR bytes."))?;
+        println!("Store has received coserv: {:?}", coserv);
         let mut parsed = parse_coserv(&coserv)?;
+        println!("Adding parsed coserv: {:?}", parsed);
         self.items.append(&mut parsed);
         Ok(())
     }
