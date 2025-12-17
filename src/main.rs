@@ -162,8 +162,10 @@ const EAT_CCA_FVP_EVIDENCE: [u8; 2124] = [
 async fn main() {
     // Some hard-coded values
     // 1. The base URL of the Veraison CoSERV service
-    let base_url = "http://127.0.0.1:18080";
+    let base_url = "https://veraison.test.linaro.org:11443";
 
+    println!("Using CoSERV service at {}", base_url);
+    
     let evidence = Evidence::decode(EAT_CCA_FVP_EVIDENCE.as_slice()).unwrap();
 
     // Bootstrap - call the discovery API
@@ -263,5 +265,5 @@ async fn main() {
     let verifier = Verifier::new(store, schemes);
     let result = verifier.verify("cca", &EAT_CCA_FVP_EVIDENCE, None).unwrap();
 
-    println!("ACS: {}", serde_json::to_string(&result.acs).unwrap());
+    println!("EAR: {}", serde_json::to_string(&result.ear).unwrap());
 }

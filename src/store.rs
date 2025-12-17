@@ -130,9 +130,7 @@ impl<'a> MemCoservStore<'a> {
     pub fn add_coserv_cbor_bytes(&mut self, bytes: &[u8]) -> Result<()> {
         let coserv = Coserv::from_cbor(bytes)
             .map_err(|_e| Error::custom("Failed to parse CoSERV from CBOR bytes."))?;
-        println!("Store has received coserv: {:?}", coserv);
         let mut parsed = parse_coserv(&coserv)?;
-        println!("Adding parsed coserv: {:?}", parsed);
         self.items.append(&mut parsed);
         Ok(())
     }
