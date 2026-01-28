@@ -4,10 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-coserv-rs = { path = "../../MonakaResearch/coserv-rs" }
-corim-rs = { git = "https://github.com/veraison/corim-rs.git" }
-cover = { path = "../cover" }
-veraison-apiclient = { path = "../rust-apiclient" }
+coserv-rs = { git = "https://github.com/veraison/coserv-rs" }
+corim-rs = { git = "https://github.com/veraison/corim-rs" }
+cover = { git = "https://github.com/veraison/cover" }
+veraison-apiclient = { git = "https://github.com/veraison/rust-apiclient" }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = { version = "1.0.140", features = ["raw_value"] }
 ccatoken = { git = "https://github.com/veraison/rust-ccatoken" }

@@ -247,8 +247,8 @@ async fn main() {
     println!("The trust anchor query is: {}", ta_coserv.to_b64_url().unwrap());
 
     // Run the two queries against the Veraison service
-    let rv_result = query_runner.execute_query(&rv_coserv, false).await.unwrap();
-    let ta_result = query_runner.execute_query(&ta_coserv, false).await.unwrap();
+    let rv_result = query_runner.execute_query_unsigned(&rv_coserv).await.unwrap();
+    let ta_result = query_runner.execute_query_unsigned(&ta_coserv).await.unwrap();
 
     let mut schemes = HashMap::new();
     let cca_scheme: Box<dyn Scheme> = Box::new(CcaScheme::new());
